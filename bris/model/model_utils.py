@@ -163,6 +163,10 @@ def get_variable_indices(
         if forcing not in anemoi_dynamic_forcings()
     ]
 
+    required_boundary_forcings = [
+        forcing for forcing in anemoi_dynamic_forcings() if forcing in required_forcings
+    ]
+
     missing_vars = [
         var
         for var in required_prognostic_variables + required_static_forcings
@@ -215,6 +219,15 @@ def get_variable_indices(
         dtype=torch.int64,
     )
 
+    indices_boundary_forcings_input = torch.tensor(
+        [
+            full_ordered_variable_list.index(var)
+            for var in datamodule_variables
+            if var in required_boundary_forcings
+        ],
+        dtype=torch.int64
+    ) 
+
     indices = {
         "variables_input": variable_indices_input,
         "variables_output": variable_indices_output,
@@ -223,6 +236,7 @@ def get_variable_indices(
         "prognostic_input": indices_prognostic_input,
         "static_forcings_input": indices_static_forcings_input,
         "dynamic_forcings_input": indices_dynamic_forcings_input,
+        "boundary_forcings_input": indices_boundary_forcings_input
     }
     variables = {
         "all": full_ordered_variable_list,
