@@ -144,7 +144,7 @@ class BrisPredictor(BasePredictor):
             ..., self.indices["static_forcings_dataset"]
         ]
         data_input[..., self.indices['boundary_forcings_input']] = data[
-            ..., self.indices['boundary_forcings_input']
+            ..., self.indices['boundary_forcings_input'] # maybe this shouldn't be here, since the boundary forcings are not strictly static
         ]
         self.static_forcings = get_model_static_forcings(
             selection=data_config["forcing"],
