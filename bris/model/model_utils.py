@@ -103,6 +103,15 @@ def get_model_static_forcings(
             if dataset_no is not None
             else data_normalized[..., internal_data.input.name_to_index["z"]].float()
         )
+    
+    if "h" in selection:
+        static_forcings["h"] = (
+            data_normalized[dataset_no][
+                ..., internal_data.input.name_to_index["h"]
+            ].float()
+            if dataset_no is not None
+            else data_normalized[..., internal_data.input.name_to_index["h"].float()]
+        )
 
     return static_forcings
 
@@ -162,11 +171,9 @@ def get_variable_indices(
         for forcing in required_forcings
         if forcing not in anemoi_dynamic_forcings()
     ]
-
     required_boundary_forcings = [
         forcing for forcing in anemoi_dynamic_forcings() if forcing in required_forcings
     ]
-
     missing_vars = [
         var
         for var in required_prognostic_variables + required_static_forcings

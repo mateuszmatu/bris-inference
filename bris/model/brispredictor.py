@@ -143,7 +143,6 @@ class BrisPredictor(BasePredictor):
         data_input[..., self.indices["static_forcings_input"]] = data[
             ..., self.indices["static_forcings_dataset"]
         ]
-        print(self.indices)
         data_input[..., self.indices['boundary_forcings_input']] = data[
             ..., self.indices['boundary_forcings_input']
         ]
