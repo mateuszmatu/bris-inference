@@ -98,3 +98,33 @@ class MaskedGrid(BaseGridIndices):
     def get_shard_indices(self, reader_group_rank: int) -> ArrayIndex:
         sequence_indices = self.split_seq_in_shards(reader_group_rank)
         return self.grid_indices[sequence_indices]
+
+class MaskedLAMGrid(BaseGridIndices):
+    """LAM grid is masked based on a node attribute."""
+
+    def __init__(
+        self, node_name: str, reader_group_size: int, node_attribute_name: str
+    ):
+        super().__init__(node_names, reader_group_size)
+        self.node_attribute_name = node_attribute_name
+    
+    def setup(self, graph: HeteroData) -> None:
+        self.grid_indices = (
+            graph[selv.nodes_name][self.node_attribute_name].squeeze().tolist()
+        )
+        print('Graph indices')
+        print(self.grid_indices)
+        print('graph**')
+        print(graph)
+        super().setup(graph)
+    
+    @property
+    def supporting_arrays(self) -> dict:
+        return {"grid_indices": np.array(self.grid_indices, dtype=np.int64)}
+    
+    def compute_grid_size(self, _graph: HeteroData) -> int:
+        return len(self.grid_indices)
+    
+    def get_shard_indices(self, reader_group_rank: int) -> ArrayIndex:
+        sequence_indices = self.split_seq_in_shards(reader_group_rank)
+        return self.grid_indices[sequence_indices]
